@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Chat</string>
+    <string name="register_title">Create Account</string>
+    <string name="login_title">Sign In</string>
+    <string name="home_title">Chat App</string>
+    <string name="add_room_title">Chat App</string>
+    <string name="sports">Sports</string>
+    <string name="music">Music</string>
+    <string name="movies">Movies</string>
+
+</resources>
