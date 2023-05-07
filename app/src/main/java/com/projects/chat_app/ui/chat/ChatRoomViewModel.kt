@@ -12,15 +12,14 @@ import com.projects.chat_app.ui.base.BaseViewModel
 class ChatRoomViewModel : BaseViewModel<Navigator>() {
     var activeRoom:Room?=null
     val messageContent=ObservableField<String>()
-    val user:User?=UserProvider.user
 
     fun sendMessage()
     {
         if (messageContent.get().isNullOrBlank())
             return
 
-        val message=Message(content = messageContent.get()?.trim(), roomId = activeRoom?.id, senderId = user?.id,
-            senderName = user?.userName, dateTime = Timestamp.now())
+        val message=Message(content = messageContent.get()?.trim(), roomId = activeRoom?.id, senderId = UserProvider.user?.id,
+            senderName = UserProvider.user?.userName, dateTime = Timestamp.now())
 
         messageContent.set("")
 

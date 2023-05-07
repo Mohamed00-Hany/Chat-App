@@ -1,16 +1,13 @@
 package com.projects.chat_app.ui.chat
 
-import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import android.view.ViewTreeObserver
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.SmoothScroller
+import com.google.firebase.firestore.ListenerRegistration
 import com.projects.chat_app.Constants
 import com.projects.chat_app.R
 import com.projects.chat_app.database.models.Message
@@ -24,7 +21,7 @@ class ChatRoomActivity : BaseActivity<ActivityChatRoomBinding,ChatRoomViewModel>
     lateinit var messagesRecyclerView: RecyclerView
     lateinit var messagesAdapter: MessagesAdapter
     lateinit var layoutManager: LinearLayoutManager
-    var loadingMessages=1
+    var listener:ListenerRegistration?=null
     private var lastVisiblePosition:Int?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,17 +31,28 @@ class ChatRoomActivity : BaseActivity<ActivityChatRoomBinding,ChatRoomViewModel>
         viewBinding.vm=viewModel
         viewBinding.activityToolBar.vm=viewModel
         initializeMessagesRecycler()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        subscribeToMessagesChange()
         listenToKeyboard()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewBinding.contentChatRoom.message.clearFocus()
     }
 
     private fun listenToKeyboard()
     {
+
         viewBinding.contentChatRoom.message.setOnTouchListener{view,motionEvent->
 
             lastVisiblePosition=layoutManager.findLastVisibleItemPosition()
 
             Handler(Looper.getMainLooper()).postDelayed({
-                if(lastVisiblePosition==messagesAdapter.itemCount-1)
+                if(lastVisiblePosition==messagesAdapter.itemCount-1&&messagesAdapter.itemCount!=0)
                 {
                     messagesRecyclerView.scrollToPosition(messagesAdapter.itemCount-1)
                 }
@@ -55,33 +63,22 @@ class ChatRoomActivity : BaseActivity<ActivityChatRoomBinding,ChatRoomViewModel>
 
     }
 
-    override fun onStart() {
-        super.onStart()
-        if(loadingMessages==1)
-        {
-            subscribeToMessagesChange()
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        loadingMessages=0
-        viewBinding.contentChatRoom.message.clearFocus()
-    }
-
     fun subscribeToMessagesChange()
     {
-        viewModel.dataBase.getRoomMessages(activeRoom?.id?:"").addSnapshotListener{value,error->
-            if(error!=null)
-            {
-                showMessage(error.localizedMessage, posActionTitle = "Try again",posAction = {subscribeToMessagesChange()})
-            }
-            else
-            {
-                value?.documentChanges?.forEach {
-                    val message=it.document.toObject(Message::class.java)
-                    messagesAdapter.addMessage(message)
-                    messagesRecyclerView.scrollToPosition(messagesAdapter.itemCount-1)
+        if(listener==null)
+        {
+            listener=viewModel.dataBase.getRoomMessages(activeRoom?.id?:"").addSnapshotListener{value,error->
+                if(error!=null)
+                {
+                    showMessage(error.localizedMessage, posActionTitle = "Try again",posAction = {subscribeToMessagesChange()})
+                }
+                else
+                {
+                    value?.documentChanges?.forEach {
+                        val message=it.document.toObject(Message::class.java)
+                        messagesAdapter.addMessage(message)
+                        messagesRecyclerView.scrollToPosition(messagesAdapter.itemCount-1)
+                    }
                 }
             }
         }
