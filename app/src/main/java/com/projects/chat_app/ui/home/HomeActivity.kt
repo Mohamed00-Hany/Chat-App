@@ -2,7 +2,6 @@ package com.projects.chat_app.ui.home
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.projects.chat_app.Constants

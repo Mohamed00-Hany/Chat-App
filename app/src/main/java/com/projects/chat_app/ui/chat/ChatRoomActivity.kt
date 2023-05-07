@@ -1,10 +1,16 @@
 package com.projects.chat_app.ui.chat
 
+import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
+import android.view.ViewTreeObserver
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.SmoothScroller
 import com.projects.chat_app.Constants
 import com.projects.chat_app.R
 import com.projects.chat_app.database.models.Message
@@ -19,6 +25,7 @@ class ChatRoomActivity : BaseActivity<ActivityChatRoomBinding,ChatRoomViewModel>
     lateinit var messagesAdapter: MessagesAdapter
     lateinit var layoutManager: LinearLayoutManager
     var loadingMessages=1
+    private var lastVisiblePosition:Int?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +34,25 @@ class ChatRoomActivity : BaseActivity<ActivityChatRoomBinding,ChatRoomViewModel>
         viewBinding.vm=viewModel
         viewBinding.activityToolBar.vm=viewModel
         initializeMessagesRecycler()
+        listenToKeyboard()
+    }
+
+    private fun listenToKeyboard()
+    {
+        viewBinding.contentChatRoom.message.setOnTouchListener{view,motionEvent->
+
+            lastVisiblePosition=layoutManager.findLastVisibleItemPosition()
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                if(lastVisiblePosition==messagesAdapter.itemCount-1)
+                {
+                    messagesRecyclerView.scrollToPosition(messagesAdapter.itemCount-1)
+                }
+            },200)
+
+            return@setOnTouchListener false
+        }
+
     }
 
     override fun onStart() {
