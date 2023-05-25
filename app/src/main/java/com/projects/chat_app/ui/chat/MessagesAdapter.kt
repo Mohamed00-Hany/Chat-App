@@ -58,7 +58,7 @@ class MessagesAdapter(var messages:MutableList<Message>):RecyclerView.Adapter<Re
     fun addMessage(newMessage:Message)
     {
         messages.add(newMessage)
-        notifyItemInserted(messages.size)
+        notifyItemInserted(messages.size-1)
     }
 
     class SentViewHolder(private val viewBinding:ItemSentMessageBinding):RecyclerView.ViewHolder(viewBinding.root)

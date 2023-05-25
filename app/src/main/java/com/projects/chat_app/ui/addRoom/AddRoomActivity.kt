@@ -1,6 +1,5 @@
 package com.projects.chat_app.ui.addRoom
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -51,7 +50,6 @@ class AddRoomActivity : BaseActivity<ActivityAddRoomBinding,AddRoomViewModel>(),
     }
 
     override fun backToPreviousScreen() {
-        super.backToPreviousScreen()
         goToHome()
     }
 

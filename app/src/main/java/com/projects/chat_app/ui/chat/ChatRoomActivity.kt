@@ -2,8 +2,6 @@ package com.projects.chat_app.ui.chat
 
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,7 +20,6 @@ class ChatRoomActivity : BaseActivity<ActivityChatRoomBinding,ChatRoomViewModel>
     lateinit var messagesAdapter: MessagesAdapter
     lateinit var layoutManager: LinearLayoutManager
     var listener:ListenerRegistration?=null
-    private var lastVisiblePosition:Int?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,31 +33,11 @@ class ChatRoomActivity : BaseActivity<ActivityChatRoomBinding,ChatRoomViewModel>
     override fun onStart() {
         super.onStart()
         subscribeToMessagesChange()
-        listenToKeyboard()
     }
 
     override fun onStop() {
         super.onStop()
         viewBinding.contentChatRoom.message.clearFocus()
-    }
-
-    private fun listenToKeyboard()
-    {
-
-        viewBinding.contentChatRoom.message.setOnTouchListener{view,motionEvent->
-
-            lastVisiblePosition=layoutManager.findLastVisibleItemPosition()
-
-            Handler(Looper.getMainLooper()).postDelayed({
-                if(lastVisiblePosition==messagesAdapter.itemCount-1&&messagesAdapter.itemCount!=0)
-                {
-                    messagesRecyclerView.scrollToPosition(messagesAdapter.itemCount-1)
-                }
-            },200)
-
-            return@setOnTouchListener false
-        }
-
     }
 
     fun subscribeToMessagesChange()

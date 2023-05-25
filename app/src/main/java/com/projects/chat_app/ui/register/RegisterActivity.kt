@@ -1,9 +1,7 @@
 package com.projects.chat_app.ui.register
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.lifecycle.ViewModelProvider
 import com.projects.chat_app.R
 import com.projects.chat_app.ui.base.BaseActivity
@@ -36,7 +34,6 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding, RegisterViewModel
     }
 
     override fun backToPreviousScreen() {
-        super.backToPreviousScreen()
         val intent= Intent(this@RegisterActivity, LoginActivity::class.java)
         startActivity(intent)
         finish()
