@@ -4,9 +4,10 @@ This app used for talk with others so you can send/recieve messages but you shou
 ## **Topics**
 + ##### Recycler View
 + ##### Firebase
-+ ##### Data binding
++ ##### Data Binding
 + ##### MVVM
 + ##### Live Data
++ ##### Kotlin Cotoutines
 
 ## **Images**
 ![splash](https://github.com/Mohamed00-Hany/Chat-App/assets/123842448/3afd2322-de07-4d69-82a0-d338fec7e7c6)
