@@ -1,9 +1,11 @@
 package com.projects.chat_app.ui.addRoom
 
 import androidx.databinding.ObservableField
+import androidx.lifecycle.viewModelScope
 import com.projects.chat_app.database.models.Room
 import com.projects.chat_app.ui.UserProvider
 import com.projects.chat_app.ui.base.BaseViewModel
+import kotlinx.coroutines.launch
 
 class AddRoomViewModel:BaseViewModel<Navigator>() {
     val roomName=ObservableField<String>()
@@ -24,21 +26,22 @@ class AddRoomViewModel:BaseViewModel<Navigator>() {
             id = null
         )
         navigator?.showLoading("Creating...")
-        dataBase.insertRoom(room).addOnCompleteListener {task->
-            navigator?.hideLoading()
-            if(task.isSuccessful)
-            {
-                navigator?.showMessage("Room created successfully","Ok",
-                    posAction = {
-                    navigator?.goToHome()
-                })
-            }
-            else
-            {
-                navigator?.showMessage(task.exception?.localizedMessage!!)
+        viewModelScope.launch {
+            dataBase.insertRoom(room).addOnCompleteListener {task->
+                navigator?.hideLoading()
+                if(task.isSuccessful)
+                {
+                    navigator?.showMessage("Room created successfully","Ok",
+                        posAction = {
+                            navigator?.goToHome()
+                        })
+                }
+                else
+                {
+                    navigator?.showMessage(task.exception?.localizedMessage!!)
+                }
             }
         }
-
     }
 
     fun validInputs():Boolean

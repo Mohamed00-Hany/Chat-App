@@ -1,9 +1,11 @@
 package com.projects.chat_app.ui.login
 
 import androidx.databinding.ObservableField
+import androidx.lifecycle.viewModelScope
 import com.projects.chat_app.database.models.User
 import com.projects.chat_app.ui.UserProvider
 import com.projects.chat_app.ui.base.BaseViewModel
+import kotlinx.coroutines.launch
 
 class LoginViewModel : BaseViewModel<Navigator>() {
     val email=ObservableField<String>()
@@ -19,7 +21,9 @@ class LoginViewModel : BaseViewModel<Navigator>() {
         auth.signInWithEmailAndPassword(email.get()!!,password.get()!!).addOnCompleteListener {task->
             if(task.isSuccessful)
             {
-                getUserFromDatabase(task.result.user?.uid!!)
+                viewModelScope.launch {
+                    getUserFromDatabase(task.result.user?.uid!!)
+                }
             }
             else
             {
@@ -29,7 +33,7 @@ class LoginViewModel : BaseViewModel<Navigator>() {
         }
     }
 
-    private fun getUserFromDatabase(userId:String) {
+    private suspend fun getUserFromDatabase(userId:String) {
         val doc=dataBase.getUser(userId)
 
         doc.addOnCompleteListener{task->

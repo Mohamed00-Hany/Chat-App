@@ -3,6 +3,7 @@ package com.projects.chat_app.ui.home
 import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.projects.chat_app.Constants
 import com.projects.chat_app.R
@@ -11,6 +12,7 @@ import com.projects.chat_app.databinding.ActivityHomeBinding
 import com.projects.chat_app.ui.addRoom.AddRoomActivity
 import com.projects.chat_app.ui.base.BaseActivity
 import com.projects.chat_app.ui.chat.ChatRoomActivity
+import kotlinx.coroutines.launch
 
 class HomeActivity:BaseActivity<ActivityHomeBinding,HomeViewModel>(),Navigator {
     lateinit var roomsRecycler:RecyclerView

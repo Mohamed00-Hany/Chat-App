@@ -23,15 +23,12 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                >
+                android:layout_height="match_parent">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/messages_recycler"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:orientation="vertical"
-                    android:clipToPadding="false"
                     app:layout_constraintBottom_toTopOf="@id/send_message"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
