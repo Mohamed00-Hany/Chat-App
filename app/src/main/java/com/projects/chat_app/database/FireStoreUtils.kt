@@ -10,43 +10,75 @@ import com.projects.chat_app.database.models.Message
 import com.projects.chat_app.database.models.Room
 
 import com.projects.chat_app.database.models.User
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class FireStoreUtils {
 
     private val db=FirebaseFirestore.getInstance()
 
-    fun insertUser(user: User):Task<Void> {
-        return db.collection("users").document(user.id!!).set(user)
+    suspend fun insertUser(user: User):Task<Void> {
+        val task:Task<Void>
+        withContext(Dispatchers.IO)
+        {
+            task=db.collection("users").document(user.id!!).set(user)
+        }
+        return task
     }
 
-    fun getUser(userId:String):Task<DocumentSnapshot>
+    suspend fun getUser(userId:String):Task<DocumentSnapshot>
     {
-        return db.collection("users").document(userId).get()
+        val task:Task<DocumentSnapshot>
+        withContext(Dispatchers.IO)
+        {
+            task=db.collection("users").document(userId).get()
+        }
+        return task
     }
 
-    fun insertRoom(room: Room):Task<Void>
+    suspend fun insertRoom(room: Room):Task<Void>
     {
         val docRef= db.collection("rooms").document()
         room.id=docRef.id
-        return docRef.set(room)
+        val task:Task<Void>
+        withContext(Dispatchers.IO)
+        {
+            task=docRef.set(room)
+        }
+        return task
     }
 
-    fun getAllRooms(): Task<QuerySnapshot>
+    suspend fun getAllRooms(): Task<QuerySnapshot>
     {
-        return db.collection("rooms").get()
+        val task:Task<QuerySnapshot>
+        withContext(Dispatchers.IO)
+        {
+            task=db.collection("rooms").get()
+        }
+        return task
     }
 
-    fun sendMessage(message: Message):Task<Void>
+    suspend fun sendMessage(message: Message):Task<Void>
     {
         val roomRef=db.collection("rooms").document(message.roomId?:"")
         val messageRef=roomRef.collection("messages").document()
         message.id=messageRef.id
-        return messageRef.set(message)
+        val task:Task<Void>
+        withContext(Dispatchers.IO)
+        {
+            task=messageRef.set(message)
+        }
+        return task
     }
 
-    fun getRoomMessages(roomId:String) : Query
+    suspend fun getRoomMessages(roomId:String) : Query
     {
-        return db.collection("rooms").document(roomId).collection("messages").orderBy("dateTime")
+        val query:Query
+        withContext(Dispatchers.IO)
+        {
+            query=db.collection("rooms").document(roomId).collection("messages").orderBy("dateTime")
+        }
+        return query
     }
 
     companion object{

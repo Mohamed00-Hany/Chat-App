@@ -2,7 +2,10 @@ package com.projects.chat_app.ui.chat
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.view.KeyEvent
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.ListenerRegistration
@@ -12,6 +15,7 @@ import com.projects.chat_app.database.models.Message
 import com.projects.chat_app.database.models.Room
 import com.projects.chat_app.databinding.ActivityChatRoomBinding
 import com.projects.chat_app.ui.base.BaseActivity
+import kotlinx.coroutines.launch
 
 
 class ChatRoomActivity : BaseActivity<ActivityChatRoomBinding,ChatRoomViewModel>(),Navigator {
@@ -32,7 +36,9 @@ class ChatRoomActivity : BaseActivity<ActivityChatRoomBinding,ChatRoomViewModel>
 
     override fun onStart() {
         super.onStart()
-        subscribeToMessagesChange()
+        lifecycleScope.launch {
+            subscribeToMessagesChange()
+        }
     }
 
     override fun onStop() {
@@ -40,14 +46,15 @@ class ChatRoomActivity : BaseActivity<ActivityChatRoomBinding,ChatRoomViewModel>
         viewBinding.contentChatRoom.message.clearFocus()
     }
 
-    fun subscribeToMessagesChange()
+    suspend fun subscribeToMessagesChange()
     {
         if(listener==null)
         {
             listener=viewModel.dataBase.getRoomMessages(activeRoom?.id?:"").addSnapshotListener{value,error->
                 if(error!=null)
                 {
-                    showMessage(error.localizedMessage, posActionTitle = "Try again",posAction = {subscribeToMessagesChange()})
+                    showMessage(error.localizedMessage, posActionTitle = "Try again",posAction = {
+                        lifecycleScope.launch { subscribeToMessagesChange() }})
                 }
                 else
                 {
