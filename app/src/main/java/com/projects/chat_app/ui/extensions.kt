@@ -1,4 +1,4 @@
-package com.projects.chat_app.ui.register
+package com.projects.chat_app.ui
 
 fun String.isMatch():Boolean
 {

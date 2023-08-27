@@ -82,7 +82,7 @@ class FireStoreUtils {
     }
 
     companion object{
-        var fireStoreUtils:FireStoreUtils?=null
+        private var fireStoreUtils:FireStoreUtils?=null
 
         fun getInstance():FireStoreUtils
         {

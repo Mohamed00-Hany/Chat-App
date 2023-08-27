@@ -3,6 +3,7 @@ package com.projects.chat_app.ui.base
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
@@ -10,6 +11,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
 import com.projects.chat_app.R
+import com.projects.chat_app.ui.UserProvider
+import com.projects.chat_app.ui.splash.SplashActivity
 
 abstract class BaseActivity<VB:ViewDataBinding,VM:ViewModel> :AppCompatActivity(), BaseNavigator {
     lateinit var viewBinding: VB
@@ -21,6 +24,15 @@ abstract class BaseActivity<VB:ViewDataBinding,VM:ViewModel> :AppCompatActivity(
         super.onCreate(savedInstanceState)
         viewBinding=DataBindingUtil.setContentView(this,getLayoutId())
         viewModel= generateViewModel()
+        if (savedInstanceState!=null)
+        {
+            if (UserProvider.user==null)
+            {
+                val intent=Intent(this,SplashActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+        }
     }
 
     abstract fun getLayoutId():Int

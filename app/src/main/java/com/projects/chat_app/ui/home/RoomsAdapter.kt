@@ -19,7 +19,7 @@ class RoomsAdapter(private var itemsList:List<Room>?=null) : RecyclerView.Adapte
         val item= itemsList!![position]
         holder.bind(item)
         holder.itemView.setOnClickListener{
-            itemClick?.onItemClick(position,item)
+            itemClickListener?.onItemClick(position,item)
         }
     }
 
@@ -31,9 +31,9 @@ class RoomsAdapter(private var itemsList:List<Room>?=null) : RecyclerView.Adapte
         notifyDataSetChanged()
     }
 
-    var itemClick:OnItemClickListener?=null
+    var itemClickListener:ItemClick?=null
 
-    interface OnItemClickListener
+    interface ItemClick
     {
         fun onItemClick(position:Int,item: Room)
     }

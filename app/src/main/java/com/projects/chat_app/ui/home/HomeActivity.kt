@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
-import com.projects.chat_app.Constants
+import com.projects.chat_app.ui.Constants
 import com.projects.chat_app.R
 import com.projects.chat_app.database.models.Room
 import com.projects.chat_app.databinding.ActivityHomeBinding
@@ -40,7 +40,7 @@ class HomeActivity:BaseActivity<ActivityHomeBinding,HomeViewModel>(),Navigator {
     private fun initRoomsRecycler() {
         roomsRecycler=viewBinding.contentHome.roomsRecycler
         roomsAdapter= RoomsAdapter()
-        roomsAdapter.itemClick=object :RoomsAdapter.OnItemClickListener{
+        roomsAdapter.itemClickListener=object :RoomsAdapter.ItemClick{
             override fun onItemClick(position: Int, item: Room) {
                 goToChatRoom(item)
             }

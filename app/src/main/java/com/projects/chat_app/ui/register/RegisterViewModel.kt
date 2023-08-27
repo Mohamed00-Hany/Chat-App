@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.projects.chat_app.database.models.User
 import com.projects.chat_app.ui.UserProvider
 import com.projects.chat_app.ui.base.BaseViewModel
+import com.projects.chat_app.ui.isMatch
 import kotlinx.coroutines.launch
 
 class RegisterViewModel : BaseViewModel<Navigator>() {

@@ -9,7 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.ListenerRegistration
-import com.projects.chat_app.Constants
+import com.projects.chat_app.ui.Constants
 import com.projects.chat_app.R
 import com.projects.chat_app.database.models.Message
 import com.projects.chat_app.database.models.Room
@@ -43,10 +43,12 @@ class ChatRoomActivity : BaseActivity<ActivityChatRoomBinding,ChatRoomViewModel>
 
     override fun onStop() {
         super.onStop()
+        listener?.remove()
+        listener=null
         viewBinding.contentChatRoom.message.clearFocus()
     }
 
-    suspend fun subscribeToMessagesChange()
+    private suspend fun subscribeToMessagesChange()
     {
         if(listener==null)
         {
@@ -72,8 +74,9 @@ class ChatRoomActivity : BaseActivity<ActivityChatRoomBinding,ChatRoomViewModel>
         messagesRecyclerView=viewBinding.contentChatRoom.messagesRecycler
         messagesAdapter= MessagesAdapter(mutableListOf<Message>())
         layoutManager=LinearLayoutManager(this)
-        messagesRecyclerView.adapter=messagesAdapter
+        layoutManager.stackFromEnd=true
         messagesRecyclerView.layoutManager=layoutManager
+        messagesRecyclerView.adapter=messagesAdapter
     }
 
     private fun initializeRoom()
