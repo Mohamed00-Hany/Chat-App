@@ -26,7 +26,7 @@ class RoomsAdapter(private var itemsList:List<Room>?=null) : RecyclerView.Adapte
     override fun getItemCount(): Int = itemsList?.size ?: 0
 
 
-    fun changeData(newList:List<Room>) {
+    fun changeData(newList:List<Room>?) {
         itemsList=newList
         notifyDataSetChanged()
     }

@@ -5,7 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
 import com.projects.chat_app.database.models.Message
 import com.projects.chat_app.database.models.Room
-import com.projects.chat_app.database.models.User
+import com.projects.chat_app.repositories.messages.MessagesDataSourceImpl
+import com.projects.chat_app.repositories.messages.MessagesRepositoryImpl
+import com.projects.chat_app.repositoriesContract.messages.MessagesDataSource
+import com.projects.chat_app.repositoriesContract.messages.MessagesRepository
+import com.projects.chat_app.repositoriesContract.messages.OnSendMessagesTaskCompleted
 import com.projects.chat_app.ui.UserProvider
 import com.projects.chat_app.ui.base.BaseViewModel
 import kotlinx.coroutines.launch
@@ -14,6 +18,8 @@ import kotlinx.coroutines.launch
 class ChatRoomViewModel : BaseViewModel<Navigator>() {
     var activeRoom:Room?=null
     val messageContent=ObservableField<String>()
+    val messagesDataSource:MessagesDataSource=MessagesDataSourceImpl(dataBase)
+    val messagesRepository:MessagesRepository=MessagesRepositoryImpl(messagesDataSource)
 
     fun sendMessage()
     {
@@ -26,14 +32,13 @@ class ChatRoomViewModel : BaseViewModel<Navigator>() {
         messageContent.set("")
 
         viewModelScope.launch {
-            dataBase.sendMessage(message).addOnCompleteListener {task->
-                if(!task.isSuccessful)
-                {
+            messagesRepository.sendMessage(message,object :OnSendMessagesTaskCompleted {
+                override fun onFail(error: String?) {
                     messageContent.set(message.content)
-                    navigator?.showMessage("Error sending your message", posActionTitle = "Try again", posAction = { sendMessage() },
+                    navigator?.showMessage(error ?: "Error sending your message", posActionTitle = "Try again", posAction = { sendMessage() },
                         negActionTitle = "Ok")
                 }
-            }
+            })
         }
     }
 
