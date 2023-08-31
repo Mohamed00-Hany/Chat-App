@@ -3,6 +3,11 @@ package com.projects.chat_app.ui.register
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
 import com.projects.chat_app.database.models.User
+import com.projects.chat_app.repositories.user.UserRepositoryImpl
+import com.projects.chat_app.repositories.user.UserDataSourceImpl
+import com.projects.chat_app.repositoriesContract.user.OnUserTaskCompleted
+import com.projects.chat_app.repositoriesContract.user.UserDataSource
+import com.projects.chat_app.repositoriesContract.user.UserRepository
 import com.projects.chat_app.ui.UserProvider
 import com.projects.chat_app.ui.base.BaseViewModel
 import com.projects.chat_app.ui.isMatch
@@ -36,17 +41,32 @@ class RegisterViewModel : BaseViewModel<Navigator>() {
 
     }
 
+    private val userDataSource: UserDataSource = UserDataSourceImpl(dataBase)
+    private val userRepo: UserRepository = UserRepositoryImpl(userDataSource)
+
     private suspend fun insertUserToDatabase(userId: String) {
         val user = User(userId, userName.get(), email.get())
-        dataBase.insertUser(user).addOnCompleteListener { task ->
-            navigator?.hideLoading()
-            if (task.isSuccessful) {
-                UserProvider.user = user
-                goToHome()
-            } else {
-                navigator?.showMessage(task.exception?.localizedMessage ?: "")
+        userRepo.insertUser(user,object : OnUserTaskCompleted {
+            override fun onComplete() {
+                navigator?.hideLoading()
             }
-        }
+
+            override fun onSuccess(user: User?) {
+                UserProvider.user = user
+                if (UserProvider.user!=null)
+                {
+                    goToHome()
+                }
+                else
+                {
+                    navigator?.showMessage("Error, user not found")
+                }
+            }
+
+            override fun onFail(error: String?) {
+                navigator?.showMessage(error?:"Error, can't add user")
+            }
+        })
     }
 
     private fun goToHome() {

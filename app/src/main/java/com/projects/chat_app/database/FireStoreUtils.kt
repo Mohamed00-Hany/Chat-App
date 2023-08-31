@@ -1,14 +1,12 @@
 package com.projects.chat_app.database
 
 import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.projects.chat_app.database.models.Message
 import com.projects.chat_app.database.models.Room
-
 import com.projects.chat_app.database.models.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

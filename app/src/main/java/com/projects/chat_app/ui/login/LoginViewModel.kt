@@ -3,6 +3,11 @@ package com.projects.chat_app.ui.login
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
 import com.projects.chat_app.database.models.User
+import com.projects.chat_app.repositories.user.UserRepositoryImpl
+import com.projects.chat_app.repositories.user.UserDataSourceImpl
+import com.projects.chat_app.repositoriesContract.user.OnUserTaskCompleted
+import com.projects.chat_app.repositoriesContract.user.UserDataSource
+import com.projects.chat_app.repositoriesContract.user.UserRepository
 import com.projects.chat_app.ui.UserProvider
 import com.projects.chat_app.ui.base.BaseViewModel
 import kotlinx.coroutines.launch
@@ -33,22 +38,31 @@ class LoginViewModel : BaseViewModel<Navigator>() {
         }
     }
 
-    private suspend fun getUserFromDatabase(userId:String) {
-        val doc=dataBase.getUser(userId)
+    private val userDataSource: UserDataSource = UserDataSourceImpl(dataBase)
+    private val userRepo: UserRepository = UserRepositoryImpl(userDataSource)
 
-        doc.addOnCompleteListener{task->
-            navigator?.hideLoading()
-            if(task.isSuccessful)
-            {
-                val user=task.result.toObject(User::class.java)
-                UserProvider.user=user
-                navigator?.goToHome()
+    private suspend fun getUserFromDatabase(userId:String) {
+        userRepo.getUser(userId,object: OnUserTaskCompleted {
+            override fun onComplete() {
+                navigator?.hideLoading()
             }
-            else
-            {
-                navigator?.showMessage(task.exception?.localizedMessage?:"")
+
+            override fun onSuccess(user: User?) {
+                UserProvider.user = user
+                if (UserProvider.user!=null)
+                {
+                    navigator?.goToHome()
+                }
+                else
+                {
+                    navigator?.showMessage("Error, user not found")
+                }
             }
-        }
+
+            override fun onFail(error: String?) {
+                navigator?.showMessage(error?:"Error, user not found")
+            }
+        })
     }
 
     fun validForm():Boolean
