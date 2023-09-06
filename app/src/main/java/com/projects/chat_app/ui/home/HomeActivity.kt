@@ -23,7 +23,9 @@ class HomeActivity:BaseActivity<ActivityHomeBinding,HomeViewModel>(),Navigator {
         viewBinding.vm=viewModel
         viewBinding.activityToolBar.vm=viewModel
         initRoomsRecycler()
-        subscribeToLiveData()
+        lifecycleScope.launch {
+            subscribeToStateFlow()
+        }
     }
 
     override fun onStart() {
@@ -31,9 +33,12 @@ class HomeActivity:BaseActivity<ActivityHomeBinding,HomeViewModel>(),Navigator {
         viewModel.loadRooms()
     }
 
-    private fun subscribeToLiveData() {
-        viewModel.roomsLiveData.observe(this){
-            roomsAdapter.changeData(it)
+    private suspend fun subscribeToStateFlow() {
+        viewModel.roomsStateFlow.collect{rooms->
+            if (rooms!=null)
+            {
+                roomsAdapter.changeData(rooms)
+            }
         }
     }
 

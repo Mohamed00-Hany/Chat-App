@@ -2,15 +2,17 @@ package com.projects.chat_app.ui.register
 
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
+import com.projects.chat_app.database.models.Message
 import com.projects.chat_app.database.models.User
 import com.projects.chat_app.repositories.user.UserRepositoryImpl
 import com.projects.chat_app.repositories.user.UserDataSourceImpl
-import com.projects.chat_app.repositoriesContract.user.OnUserTaskCompleted
+import com.projects.chat_app.repositoriesContract.TaskStates
 import com.projects.chat_app.repositoriesContract.user.UserDataSource
 import com.projects.chat_app.repositoriesContract.user.UserRepository
 import com.projects.chat_app.ui.UserProvider
 import com.projects.chat_app.ui.base.BaseViewModel
 import com.projects.chat_app.ui.isMatch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class RegisterViewModel : BaseViewModel<Navigator>() {
@@ -46,27 +48,26 @@ class RegisterViewModel : BaseViewModel<Navigator>() {
 
     private suspend fun insertUserToDatabase(userId: String) {
         val user = User(userId, userName.get(), email.get())
-        userRepo.insertUser(user,object : OnUserTaskCompleted {
-            override fun onComplete() {
-                navigator?.hideLoading()
-            }
-
-            override fun onSuccess(user: User?) {
-                UserProvider.user = user
-                if (UserProvider.user!=null)
-                {
-                    goToHome()
+        userRepo.insertUser(user).collect {
+            when (it) {
+                is TaskStates.TaskCompleted<*> -> {
+                    navigator?.hideLoading()
                 }
-                else
-                {
-                    navigator?.showMessage("Error, user not found")
+                is TaskStates.TaskSucceed<*> -> {
+                    val user = it.data as User
+                    UserProvider.user = user
+                    if (UserProvider.user != null) {
+                        goToHome()
+                    } else {
+                        navigator?.showMessage("Error, user not found")
+                    }
+                }
+                else -> {
+                    val taskFailed = it as TaskStates.TaskFailed
+                    navigator?.showMessage(taskFailed.error ?: "Error, can't add user")
                 }
             }
-
-            override fun onFail(error: String?) {
-                navigator?.showMessage(error?:"Error, can't add user")
-            }
-        })
+        }
     }
 
     private fun goToHome() {
