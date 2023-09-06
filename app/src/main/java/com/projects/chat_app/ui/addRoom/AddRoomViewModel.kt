@@ -3,9 +3,10 @@ package com.projects.chat_app.ui.addRoom
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
 import com.projects.chat_app.database.models.Room
+import com.projects.chat_app.database.models.User
 import com.projects.chat_app.repositories.rooms.RoomsDataSourceImpl
 import com.projects.chat_app.repositories.rooms.RoomsRepositoryImpl
-import com.projects.chat_app.repositoriesContract.rooms.OnRoomTaskCompleted
+import com.projects.chat_app.repositoriesContract.TaskStates
 import com.projects.chat_app.repositoriesContract.rooms.RoomsDataSource
 import com.projects.chat_app.repositoriesContract.rooms.RoomsRepository
 import com.projects.chat_app.ui.UserProvider
@@ -33,24 +34,24 @@ class AddRoomViewModel : BaseViewModel<Navigator>() {
         )
         navigator?.showLoading("Creating...")
         viewModelScope.launch {
-            roomsRepository.insertRoom(room, object : OnRoomTaskCompleted {
-                override fun onComplete() {
-                    navigator?.hideLoading()
+            roomsRepository.insertRoom(room).collect {
+                when (it) {
+                    is TaskStates.TaskCompleted<*> -> {
+                        navigator?.hideLoading()
+                    }
+                    is TaskStates.TaskSucceed<*> -> {
+                        navigator?.showMessage("Room created successfully", "Ok",
+                            posAction = { navigator?.goToHome() })
+                    }
+                    else -> {
+                        val taskFailed = it as TaskStates.TaskFailed
+                        navigator?.showMessage(taskFailed.error ?: "Error, can't add room")
+                    }
                 }
-
-                override fun onSuccess(room: Room?) {
-                    navigator?.showMessage("Room created successfully", "Ok",
-                        posAction = {
-                            navigator?.goToHome()
-                        })
-                }
-
-                override fun onFail(error: String?) {
-                    navigator?.showMessage(error ?: "Error, can't add room")
-                }
-            })
+            }
         }
     }
+
 
     fun validInputs(): Boolean {
         var isValid = true

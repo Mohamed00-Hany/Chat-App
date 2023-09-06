@@ -5,11 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.projects.chat_app.database.models.User
 import com.projects.chat_app.repositories.user.UserRepositoryImpl
 import com.projects.chat_app.repositories.user.UserDataSourceImpl
-import com.projects.chat_app.repositoriesContract.user.OnUserTaskCompleted
+import com.projects.chat_app.repositoriesContract.TaskStates
 import com.projects.chat_app.repositoriesContract.user.UserDataSource
 import com.projects.chat_app.repositoriesContract.user.UserRepository
 import com.projects.chat_app.ui.UserProvider
 import com.projects.chat_app.ui.base.BaseViewModel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class LoginViewModel : BaseViewModel<Navigator>() {
@@ -42,28 +43,31 @@ class LoginViewModel : BaseViewModel<Navigator>() {
     private val userRepo: UserRepository = UserRepositoryImpl(userDataSource)
 
     private suspend fun getUserFromDatabase(userId:String) {
-        userRepo.getUser(userId,object: OnUserTaskCompleted {
-            override fun onComplete() {
-                navigator?.hideLoading()
-            }
-
-            override fun onSuccess(user: User?) {
-                UserProvider.user = user
-                if (UserProvider.user!=null)
-                {
-                    navigator?.goToHome()
+        userRepo.getUser(userId).collect {
+            when (it) {
+                is TaskStates.TaskCompleted<*> -> {
+                    navigator?.hideLoading()
                 }
-                else
-                {
-                    navigator?.showMessage("Error, user not found")
+                is TaskStates.TaskSucceed<*> -> {
+                    val user = it.data as User
+                    UserProvider.user = user
+                    if (UserProvider.user!=null)
+                    {
+                        navigator?.goToHome()
+                    }
+                    else
+                    {
+                        navigator?.showMessage("Error, user not found")
+                    }
+                }
+                else -> {
+                    val taskFailed = it as TaskStates.TaskFailed
+                    navigator?.showMessage(taskFailed.error ?: "Error, user not found")
                 }
             }
-
-            override fun onFail(error: String?) {
-                navigator?.showMessage(error?:"Error, user not found")
-            }
-        })
+        }
     }
+
 
     fun validForm():Boolean
     {
