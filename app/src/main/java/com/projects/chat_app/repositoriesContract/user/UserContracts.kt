@@ -11,6 +11,6 @@ interface UserRepository {
     suspend fun getUser(userId:String): Flow<TaskStates>
 }
 interface UserDataSource {
-    suspend fun insertUser(user: User): Flow<Task<Void>>
-    suspend fun getUser(userId:String): Flow<Task<DocumentSnapshot>>
+    suspend fun insertUser(user: User): Flow<TaskStates>
+    suspend fun getUser(userId:String): Flow<TaskStates>
 }

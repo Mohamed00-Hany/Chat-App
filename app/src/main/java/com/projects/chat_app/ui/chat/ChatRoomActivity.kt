@@ -2,7 +2,6 @@ package com.projects.chat_app.ui.chat
 
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,7 +12,6 @@ import com.projects.chat_app.database.models.Room
 import com.projects.chat_app.databinding.ActivityChatRoomBinding
 import com.projects.chat_app.ui.base.BaseActivity
 import kotlinx.coroutines.launch
-
 
 class ChatRoomActivity : BaseActivity<ActivityChatRoomBinding, ChatRoomViewModel>(), Navigator {
     private var activeRoom: Room? = null
@@ -69,8 +67,6 @@ class ChatRoomActivity : BaseActivity<ActivityChatRoomBinding, ChatRoomViewModel
                 }
             }
         }
-
-
     }
 
     private fun initializeMessagesRecycler() {
@@ -100,5 +96,11 @@ class ChatRoomActivity : BaseActivity<ActivityChatRoomBinding, ChatRoomViewModel
     override fun backToPreviousScreen() {
         super.backToPreviousScreen()
         finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.messagesStateFlow.value=null
+        viewModel.errorStateFlow.value=null
     }
 }
