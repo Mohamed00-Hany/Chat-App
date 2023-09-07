@@ -10,36 +10,10 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collect
 
 class UserRepositoryImpl(private val dataSource: UserDataSource) : UserRepository {
-
-    override suspend fun insertUser(user: User): Flow<TaskStates>  = callbackFlow {
-        dataSource.insertUser(user).collect{ task ->
-            task.addOnCompleteListener {
-                trySend(TaskStates.TaskCompleted(null))
-                if (task.isSuccessful) {
-                    trySend(TaskStates.TaskSucceed(user))
-                } else {
-                    val error = task.exception?.localizedMessage
-                    trySend(TaskStates.TaskFailed(error))
-                }
-            }
-        }
-        awaitClose()
+    override suspend fun insertUser(user: User): Flow<TaskStates> {
+        return dataSource.insertUser(user)
     }
-
-    override suspend fun getUser(userId: String): Flow<TaskStates> = callbackFlow {
-        dataSource.getUser(userId).collect { task ->
-            task.addOnCompleteListener {
-                trySend(TaskStates.TaskCompleted(null))
-                if (task.isSuccessful) {
-                    val user = task.result.toObject(User::class.java)
-                    trySend(TaskStates.TaskSucceed(user))
-                } else {
-                    val error = task.exception?.localizedMessage
-                    trySend(TaskStates.TaskFailed(error))
-                }
-            }
-        }
-        awaitClose()
+    override suspend fun getUser(userId: String): Flow<TaskStates> {
+        return dataSource.getUser(userId)
     }
-
 }
