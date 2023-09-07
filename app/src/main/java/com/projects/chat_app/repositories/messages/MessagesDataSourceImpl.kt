@@ -1,6 +1,5 @@
 package com.projects.chat_app.repositories.messages
 
-import com.google.firebase.firestore.ListenerRegistration
 import com.projects.chat_app.database.FireStoreUtils
 import com.projects.chat_app.database.models.Message
 import com.projects.chat_app.repositoriesContract.TaskStates
@@ -21,8 +20,7 @@ class MessagesDataSourceImpl(private val dataBase: FireStoreUtils) : MessagesDat
 
     override suspend fun receiveMessages(roomId: String) = callbackFlow {
         val query = dataBase.getRoomMessages(roomId)
-        var listener: ListenerRegistration? = null
-        listener = query.addSnapshotListener { value, error ->
+        val listener = query.addSnapshotListener { value, error ->
             if (error != null) {
                 trySend(TaskStates.TaskFailed(error.localizedMessage))
             } else {
@@ -32,6 +30,6 @@ class MessagesDataSourceImpl(private val dataBase: FireStoreUtils) : MessagesDat
                 }
             }
         }
-        awaitClose { listener?.remove() }
+        awaitClose { listener.remove() }
     }
 }
