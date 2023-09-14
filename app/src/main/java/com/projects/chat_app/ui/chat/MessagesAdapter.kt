@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.projects.chat_app.R
-import com.projects.chat_app.database.models.Message
+import com.projects.domain.models.Message
 import com.projects.chat_app.databinding.ItemReceivedMessageBinding
 import com.projects.chat_app.databinding.ItemSentMessageBinding
 import com.projects.chat_app.ui.UserProvider

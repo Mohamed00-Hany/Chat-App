@@ -2,13 +2,16 @@ package com.projects.chat_app.ui.login
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.projects.chat_app.R
 import com.projects.chat_app.ui.base.BaseActivity
 import com.projects.chat_app.databinding.ActivityLoginBinding
 import com.projects.chat_app.ui.home.HomeActivity
 import com.projects.chat_app.ui.register.RegisterActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(),Navigator {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +34,8 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>(),Navig
     }
 
     override fun generateViewModel(): LoginViewModel {
-        return ViewModelProvider(this)[LoginViewModel::class.java]
+        val viewModel:LoginViewModel by viewModels()
+        return viewModel
     }
 
     override fun goToRegister() {

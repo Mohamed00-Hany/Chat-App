@@ -2,20 +2,24 @@ package com.projects.chat_app.ui.register
 
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
-import com.projects.chat_app.database.models.Message
-import com.projects.chat_app.database.models.User
-import com.projects.chat_app.repositories.user.UserRepositoryImpl
-import com.projects.chat_app.repositories.user.UserDataSourceImpl
-import com.projects.chat_app.repositoriesContract.TaskStates
-import com.projects.chat_app.repositoriesContract.user.UserDataSource
-import com.projects.chat_app.repositoriesContract.user.UserRepository
+import com.projects.domain.models.Message
+import com.projects.domain.models.User
+import com.projects.data.repositories.user.UserRepositoryImpl
+import com.projects.data.repositories.user.UserDataSourceImpl
+import com.projects.domain.repositoriesContract.TaskStates
+import com.projects.domain.repositoriesContract.user.UserDataSource
+import com.projects.domain.repositoriesContract.user.UserRepository
 import com.projects.chat_app.ui.UserProvider
 import com.projects.chat_app.ui.base.BaseViewModel
 import com.projects.chat_app.ui.isMatch
+import com.projects.domain.useCases.InsertUser
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class RegisterViewModel : BaseViewModel<Navigator>() {
+@HiltViewModel
+class RegisterViewModel @Inject constructor(private val insertUser: InsertUser) : BaseViewModel<Navigator>() {
     val userName = ObservableField<String>()
     val email = ObservableField<String>()
     val password = ObservableField<String>()
@@ -43,12 +47,9 @@ class RegisterViewModel : BaseViewModel<Navigator>() {
 
     }
 
-    private val userDataSource: UserDataSource = UserDataSourceImpl(dataBase)
-    private val userRepo: UserRepository = UserRepositoryImpl(userDataSource)
-
     private suspend fun insertUserToDatabase(userId: String) {
         val user = User(userId, userName.get(), email.get())
-        userRepo.insertUser(user).collect {
+        insertUser(user).collect {
             when (it) {
                 is TaskStates.TaskCompleted<*> -> {
                     navigator?.hideLoading()

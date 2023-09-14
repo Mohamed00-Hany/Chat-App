@@ -2,18 +2,22 @@ package com.projects.chat_app.ui.login
 
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
-import com.projects.chat_app.database.models.User
-import com.projects.chat_app.repositories.user.UserRepositoryImpl
-import com.projects.chat_app.repositories.user.UserDataSourceImpl
-import com.projects.chat_app.repositoriesContract.TaskStates
-import com.projects.chat_app.repositoriesContract.user.UserDataSource
-import com.projects.chat_app.repositoriesContract.user.UserRepository
+import com.projects.domain.models.User
+import com.projects.data.repositories.user.UserRepositoryImpl
+import com.projects.data.repositories.user.UserDataSourceImpl
+import com.projects.domain.repositoriesContract.TaskStates
+import com.projects.domain.repositoriesContract.user.UserDataSource
+import com.projects.domain.repositoriesContract.user.UserRepository
 import com.projects.chat_app.ui.UserProvider
 import com.projects.chat_app.ui.base.BaseViewModel
+import com.projects.domain.useCases.GetUser
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LoginViewModel : BaseViewModel<Navigator>() {
+@HiltViewModel
+class LoginViewModel @Inject constructor(private val getUser: GetUser) : BaseViewModel<Navigator>() {
     val email=ObservableField<String>()
     val password=ObservableField<String>()
     val emailError=ObservableField<String?>()
@@ -39,11 +43,8 @@ class LoginViewModel : BaseViewModel<Navigator>() {
         }
     }
 
-    private val userDataSource: UserDataSource = UserDataSourceImpl(dataBase)
-    private val userRepo: UserRepository = UserRepositoryImpl(userDataSource)
-
     private suspend fun getUserFromDatabase(userId:String) {
-        userRepo.getUser(userId).collect {
+        getUser(userId).collect {
             when (it) {
                 is TaskStates.TaskCompleted<*> -> {
                     navigator?.hideLoading()

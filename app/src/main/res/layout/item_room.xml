@@ -6,7 +6,7 @@
     <data>
         <variable
             name="item"
-            type="com.projects.chat_app.database.models.Room" />
+            type="com.projects.domain.models.Room" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -32,7 +32,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toTopOf="@id/room_name"
                 tools:src="@tools:sample/avatars"
-                imageId="@{item.getImageId()}"/>
+                roomCategoryId="@{item.roomCategoryId}"/>
 
             <TextView
                 android:id="@+id/room_name"
