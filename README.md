@@ -9,6 +9,8 @@ This app used for talk with others so you can send/recieve messages but you shou
 + ##### Kotlin Cotoutines
 + ##### Kotlin Flow & StateFlow
 + ##### Repository pattern
++ ##### dependency injection using hilt
++ ##### Clean architecture
 
 ## **Images**
 ![splash](https://github.com/Mohamed00-Hany/Chat-App/assets/123842448/0d7882b2-6c7a-4e8d-aa73-5ff4abba3f1d)
