@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.projects.chat_app.R
-import com.projects.chat_app.database.models.Room
+import com.projects.domain.models.Room
 import com.projects.chat_app.databinding.ItemRoomBinding
 
 class RoomsAdapter(private var itemsList:List<Room>?=null) : RecyclerView.Adapter<RoomsAdapter.ViewHolder>() {
@@ -40,7 +40,7 @@ class RoomsAdapter(private var itemsList:List<Room>?=null) : RecyclerView.Adapte
 
     class ViewHolder(private val viewBinding:ItemRoomBinding) : RecyclerView.ViewHolder(viewBinding.root)
     {
-        fun bind(item:Room)
+        fun bind(item: Room)
         {
             viewBinding.item=item
             viewBinding.invalidateAll()

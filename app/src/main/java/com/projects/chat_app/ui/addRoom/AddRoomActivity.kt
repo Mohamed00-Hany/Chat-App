@@ -3,11 +3,15 @@ package com.projects.chat_app.ui.addRoom
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
+import androidx.activity.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.projects.chat_app.R
 import com.projects.chat_app.databinding.ActivityAddRoomBinding
 import com.projects.chat_app.ui.base.BaseActivity
+import com.projects.chat_app.ui.chat.ChatRoomViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class AddRoomActivity : BaseActivity<ActivityAddRoomBinding,AddRoomViewModel>(),Navigator {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +45,8 @@ class AddRoomActivity : BaseActivity<ActivityAddRoomBinding,AddRoomViewModel>(),
     override fun getLayoutId(): Int =R.layout.activity_add_room
 
     override fun generateViewModel(): AddRoomViewModel {
-        return ViewModelProvider(this).get(AddRoomViewModel::class.java)
+        val viewModel: AddRoomViewModel by viewModels()
+        return viewModel
     }
 
     override fun goToHome()

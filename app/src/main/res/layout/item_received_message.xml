@@ -6,7 +6,7 @@
     <data>
         <variable
             name="message"
-            type="com.projects.chat_app.database.models.Message" />
+            type="com.projects.domain.models.Message" />
     </data>
     <LinearLayout
         android:layout_width="match_parent"

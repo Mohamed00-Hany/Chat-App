@@ -1,21 +1,22 @@
 package com.projects.chat_app.ui.splash
 
 import androidx.lifecycle.viewModelScope
-import com.projects.chat_app.database.models.User
-import com.projects.chat_app.repositories.user.UserRepositoryImpl
-import com.projects.chat_app.repositories.user.UserDataSourceImpl
-import com.projects.chat_app.repositoriesContract.TaskStates
-import com.projects.chat_app.repositoriesContract.user.UserDataSource
-import com.projects.chat_app.repositoriesContract.user.UserRepository
+import com.projects.domain.models.User
+import com.projects.data.repositories.user.UserRepositoryImpl
+import com.projects.data.repositories.user.UserDataSourceImpl
+import com.projects.domain.repositoriesContract.TaskStates
+import com.projects.domain.repositoriesContract.user.UserDataSource
+import com.projects.domain.repositoriesContract.user.UserRepository
 import com.projects.chat_app.ui.base.BaseViewModel
 import com.projects.chat_app.ui.UserProvider
+import com.projects.domain.useCases.GetUser
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SplashViewModel : BaseViewModel<Navigator>() {
-
-    private val userDataSource: UserDataSource = UserDataSourceImpl(dataBase)
-    private val userRepo: UserRepository = UserRepositoryImpl(userDataSource)
+@HiltViewModel
+class SplashViewModel @Inject constructor(private val getUser: GetUser): BaseViewModel<Navigator>() {
 
     fun navigate() {
         if (auth.currentUser == null) {
@@ -23,7 +24,7 @@ class SplashViewModel : BaseViewModel<Navigator>() {
             return
         }
         viewModelScope.launch {
-            userRepo.getUser(auth.currentUser?.uid!!).collect {
+            getUser(auth.currentUser?.uid!!).collect {
                 when (it) {
                     is TaskStates.TaskSucceed<*> -> {
                         val user = it.data as User

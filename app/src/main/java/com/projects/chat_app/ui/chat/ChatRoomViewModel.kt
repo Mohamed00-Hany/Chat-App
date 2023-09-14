@@ -3,24 +3,23 @@ package com.projects.chat_app.ui.chat
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
-import com.projects.chat_app.database.models.Message
-import com.projects.chat_app.database.models.Room
-import com.projects.chat_app.repositories.messages.MessagesDataSourceImpl
-import com.projects.chat_app.repositories.messages.MessagesRepositoryImpl
-import com.projects.chat_app.repositoriesContract.TaskStates
-import com.projects.chat_app.repositoriesContract.messages.MessagesDataSource
-import com.projects.chat_app.repositoriesContract.messages.MessagesRepository
+import com.projects.domain.models.Message
+import com.projects.domain.models.Room
+import com.projects.domain.repositoriesContract.TaskStates
 import com.projects.chat_app.ui.UserProvider
 import com.projects.chat_app.ui.base.BaseViewModel
+import com.projects.domain.useCases.ReceiveMessages
+import com.projects.domain.useCases.SendMessages
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-
-class ChatRoomViewModel : BaseViewModel<Navigator>() {
+@HiltViewModel
+class ChatRoomViewModel @Inject constructor(private val receiveMessages: ReceiveMessages
+,private val sendMessages: SendMessages) : BaseViewModel<Navigator>() {
     var activeRoom: Room? = null
     val messageContent = ObservableField<String>()
-    private val messagesDataSource: MessagesDataSource = MessagesDataSourceImpl(dataBase)
-    private val messagesRepository: MessagesRepository = MessagesRepositoryImpl(messagesDataSource)
     var messagesStateFlow = MutableStateFlow<Message?>(null)
     var errorStateFlow = MutableStateFlow<String?>(null)
 
@@ -39,7 +38,7 @@ class ChatRoomViewModel : BaseViewModel<Navigator>() {
         messageContent.set("")
 
         viewModelScope.launch {
-            messagesRepository.sendMessage(message).collect {
+            sendMessages(message).collect {
                 if (it is TaskStates.TaskFailed) {
                     messageContent.set(message.content)
                     navigator?.showMessage(
@@ -54,7 +53,7 @@ class ChatRoomViewModel : BaseViewModel<Navigator>() {
     }
 
     suspend fun subscribeToMessagesChange() {
-        messagesRepository.receiveMessages(activeRoom?.id ?: "").collect {
+        receiveMessages(activeRoom?.id ?: "").collect {
             when (it) {
                 is TaskStates.TaskSucceed<*> -> {
                     val message = it.data as Message

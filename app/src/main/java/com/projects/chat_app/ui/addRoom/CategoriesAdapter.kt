@@ -44,7 +44,7 @@ class CategoriesAdapter(private val listItems: List<RoomCategory>) :BaseAdapter(
 
     class ViewHolder(val viewBinding:ItemRoomCategoryBinding)
     {
-        fun bind(item:RoomCategory)
+        fun bind(item: RoomCategory)
         {
             viewBinding.item=item
             viewBinding.invalidateAll()

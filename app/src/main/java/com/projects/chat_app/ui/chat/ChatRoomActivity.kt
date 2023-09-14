@@ -2,17 +2,20 @@ package com.projects.chat_app.ui.chat
 
 import android.os.Build
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.projects.chat_app.ui.Constants
 import com.projects.chat_app.R
-import com.projects.chat_app.database.models.Room
+import com.projects.domain.models.Room
 import com.projects.chat_app.databinding.ActivityChatRoomBinding
 import com.projects.chat_app.ui.base.BaseActivity
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class ChatRoomActivity : BaseActivity<ActivityChatRoomBinding, ChatRoomViewModel>(), Navigator {
     private var activeRoom: Room? = null
     lateinit var messagesRecyclerView: RecyclerView
@@ -90,7 +93,8 @@ class ChatRoomActivity : BaseActivity<ActivityChatRoomBinding, ChatRoomViewModel
     override fun getLayoutId(): Int = R.layout.activity_chat_room
 
     override fun generateViewModel(): ChatRoomViewModel {
-        return ViewModelProvider(this)[ChatRoomViewModel::class.java]
+        val viewModel:ChatRoomViewModel by viewModels()
+        return viewModel
     }
 
     override fun backToPreviousScreen() {

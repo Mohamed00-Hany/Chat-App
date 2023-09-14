@@ -1,6 +1,6 @@
 package com.projects.chat_app.ui
 
-import com.projects.chat_app.database.models.User
+import com.projects.domain.models.User
 
 
 object UserProvider {
