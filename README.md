@@ -12,6 +12,9 @@ This app used for talk with others so you can send/recieve messages but you shou
 + ##### dependency injection using hilt
 + ##### Clean architecture
 
+## **Structure**
+![clean arch](https://github.com/Mohamed00-Hany/Chat-App/assets/123842448/03ad3bfb-9bd5-4d36-aed1-ff58a5274bf3)
+
 ## **Images**
 ![splash](https://github.com/Mohamed00-Hany/Chat-App/assets/123842448/0d7882b2-6c7a-4e8d-aa73-5ff4abba3f1d)
 ![SIGN IN](https://github.com/Mohamed00-Hany/Chat-App/assets/123842448/dece7d58-e92e-48e3-8763-d3b3b9b79e77)
