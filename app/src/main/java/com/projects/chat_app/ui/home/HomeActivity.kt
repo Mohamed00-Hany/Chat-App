@@ -16,11 +16,12 @@ import com.projects.chat_app.ui.chat.ChatRoomActivity
 import com.projects.chat_app.ui.chat.ChatRoomViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeActivity:BaseActivity<ActivityHomeBinding,HomeViewModel>(),Navigator {
     lateinit var roomsRecycler:RecyclerView
-    lateinit var roomsAdapter:RoomsAdapter
+    @Inject lateinit var roomsAdapter:RoomsAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.navigator=this
@@ -48,7 +49,6 @@ class HomeActivity:BaseActivity<ActivityHomeBinding,HomeViewModel>(),Navigator {
 
     private fun initRoomsRecycler() {
         roomsRecycler=viewBinding.contentHome.roomsRecycler
-        roomsAdapter= RoomsAdapter()
         roomsAdapter.itemClickListener=object :RoomsAdapter.ItemClick{
             override fun onItemClick(position: Int, item: Room) {
                 goToChatRoom(item)

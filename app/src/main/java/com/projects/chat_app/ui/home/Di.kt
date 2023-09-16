@@ -1,19 +1,17 @@
 package com.projects.chat_app.ui.home
 
-import com.projects.domain.repositoriesContract.rooms.RoomsRepository
-import com.projects.domain.useCases.InsertRoom
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import dagger.hilt.android.components.ActivityComponent
 
 @Module
-@InstallIn(SingletonComponent::class)
-class InsertRoomModule
+@InstallIn(ActivityComponent::class)
+class RoomsAdapterModule
 {
     @Provides
-    fun insertRoom(roomsRepository: RoomsRepository): InsertRoom
+    fun provideRoomsAdapter():RoomsAdapter
     {
-        return InsertRoom(roomsRepository)
+        return RoomsAdapter()
     }
 }
