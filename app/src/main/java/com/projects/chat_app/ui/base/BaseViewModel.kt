@@ -8,7 +8,6 @@ import com.projects.data.database.FireStoreUtils
 open class BaseViewModel<Nav: BaseNavigator>:ViewModel() {
     var navigator: Nav?=null
     val auth= FirebaseAuth.getInstance()
-    val dataBase= FireStoreUtils(FirebaseFirestore.getInstance())
 
     open fun backToPreviousScreen()
     {

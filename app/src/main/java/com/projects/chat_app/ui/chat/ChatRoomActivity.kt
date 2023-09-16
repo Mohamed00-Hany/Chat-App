@@ -14,12 +14,13 @@ import com.projects.chat_app.databinding.ActivityChatRoomBinding
 import com.projects.chat_app.ui.base.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ChatRoomActivity : BaseActivity<ActivityChatRoomBinding, ChatRoomViewModel>(), Navigator {
     private var activeRoom: Room? = null
     lateinit var messagesRecyclerView: RecyclerView
-    lateinit var messagesAdapter: MessagesAdapter
+    @Inject lateinit var messagesAdapter: MessagesAdapter
     lateinit var layoutManager: LinearLayoutManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,7 +75,6 @@ class ChatRoomActivity : BaseActivity<ActivityChatRoomBinding, ChatRoomViewModel
 
     private fun initializeMessagesRecycler() {
         messagesRecyclerView = viewBinding.contentChatRoom.messagesRecycler
-        messagesAdapter = MessagesAdapter(mutableListOf())
         layoutManager = LinearLayoutManager(this)
         layoutManager.stackFromEnd = true
         messagesRecyclerView.layoutManager = layoutManager
